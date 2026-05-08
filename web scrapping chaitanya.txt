@@ -1,0 +1,104 @@
+# Web Scraping Example using Requests and BeautifulSoup
+
+import requests
+from bs4 import BeautifulSoup
+
+# URL of product page
+url = "https://www.flipkart.com/poco-c31-royal-blue-64-gb-/p/itm19effae969b86"
+
+# Send request to website
+request1 = requests.get(url)
+
+# Print request status
+print("REQUEST 1 = \n", request1, "\n")
+
+# Print content of page
+print("CONTENTS OF REQUEST 1 = \n", request1.content, "\n")
+
+# Create BeautifulSoup object
+soup = BeautifulSoup(request1.text, "html.parser")
+
+# ---------------------------------------------------
+# FETCH REVIEWS
+# ---------------------------------------------------
+
+reviews = soup.find_all(
+    'div',
+    {
+        'class': 'a-expander-content reviewText review-text-content a-expander-partial-collapse-content'
+    }
+)
+
+print("REVIEWS:\n")
+
+for review in reviews:
+    print(review.get_text(strip=True), "\n")
+
+
+# ---------------------------------------------------
+# FETCH TOTAL RATINGS
+# ---------------------------------------------------
+
+ratings_tag = soup.find(
+    'div',
+    {
+        'class': 'a-row a-spacing-medium averageStarRatingNumerical'
+    }
+)
+
+if ratings_tag:
+    ratings = ratings_tag.get_text(strip=True)
+    print("RATINGS = \n", ratings, "\n")
+else:
+    print("Ratings not found\n")
+
+
+# ---------------------------------------------------
+# FETCH INDIVIDUAL STAR RATINGS
+# ---------------------------------------------------
+
+individual_ratings = soup.find_all(
+    'i',
+    {
+        'class': 'a-icon a-icon-star a-star-4 review-rating'
+    }
+)
+
+print("INDIVIDUAL RATINGS:\n")
+
+for ind_rating in individual_ratings:
+    print(ind_rating.get_text(strip=True), "\n")
+
+
+# ---------------------------------------------------
+# FETCH TAGS
+# ---------------------------------------------------
+
+tags = soup.find(
+    'span',
+    {
+        'class': 'a-size-base a-color-secondary'
+    }
+)
+
+if tags:
+    print("TAGS = \n", tags.get_text(strip=True), "\n")
+else:
+    print("Tags not found\n")
+
+
+# ---------------------------------------------------
+# FETCH CUSTOMER NAMES
+# ---------------------------------------------------
+
+customer_names = soup.find_all(
+    'span',
+    {
+        'class': 'a-profile-name'
+    }
+)
+
+print("CUSTOMER NAMES:\n")
+
+for cust_name in customer_names:
+    print(cust_name.get_text(strip=True))
